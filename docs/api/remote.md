@@ -188,7 +188,15 @@ consequences.
 
 ### `remote.getCurrentWebContents()`
 
-Returns [`WebContents`](web-contents.md) - The web contents of this web page.
+Returns [`WebContents`](web-contents.md) - The WebContents of this web page.
+
+### `remote.getGuestWebContents(webContentsId)`
+
+* `webContentsId` Number
+
+Returns [`WebContents`](web-contents.md) - The WebContents of a `<webview>` with `webContentsId`.
+
+**Note:** You can only get a `<webview>`, which is hosted in the callers `webContents`.
 
 ### `remote.getGlobal(name)`
 

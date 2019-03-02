@@ -6,6 +6,18 @@ Breaking changes will be documented here, and deprecation warnings added to JS c
 
 The `FIXME` string is used in code comments to denote things that should be fixed for future releases. See https://github.com/electron/electron/search?q=fixme
 
+## Planned Breaking API Changes (9.0)
+
+### `<webview>.getWebContents()`
+
+```js
+// Deprecated
+webview.getWebContents()
+// Replace with
+const { remote } = require('electron')
+remote.getGuestWebContents(webview.getWebContentsId())
+```
+
 ## Planned Breaking API Changes (8.0)
 
 ### Values sent over IPC are now serialized with Structured Clone Algorithm
