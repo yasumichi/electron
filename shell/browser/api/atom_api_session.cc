@@ -46,6 +46,7 @@
 #include "shell/browser/api/atom_api_download_item.h"
 #include "shell/browser/api/atom_api_net_log.h"
 #include "shell/browser/api/atom_api_protocol_ns.h"
+#include "shell/browser/api/atom_api_service_worker_context.h"
 #include "shell/browser/api/atom_api_web_request_ns.h"
 #include "shell/browser/atom_browser_context.h"
 #include "shell/browser/atom_browser_main_parts.h"
@@ -594,6 +595,15 @@ v8::Local<v8::Value> Session::Protocol(v8::Isolate* isolate) {
   return v8::Local<v8::Value>::New(isolate, protocol_);
 }
 
+v8::Local<v8::Value> Session::ServiceWorkerContext(v8::Isolate* isolate) {
+  if (service_worker_context_.IsEmpty()) {
+    v8::Local<v8::Value> handle;
+    handle = ServiceWorkerContext::Create(isolate, browser_context()).ToV8();
+    service_worker_context_.Reset(isolate, handle);
+  }
+  return v8::Local<v8::Value>::New(isolate, service_worker_context_);
+}
+
 v8::Local<v8::Value> Session::WebRequest(v8::Isolate* isolate) {
   if (web_request_.IsEmpty()) {
     auto handle = WebRequestNS::Create(isolate, browser_context());
@@ -721,6 +731,7 @@ void Session::BuildPrototype(v8::Isolate* isolate,
       .SetProperty("cookies", &Session::Cookies)
       .SetProperty("netLog", &Session::NetLog)
       .SetProperty("protocol", &Session::Protocol)
+      .SetProperty("serviceWorkerContext", &Session::ServiceWorkerContext)
       .SetProperty("webRequest", &Session::WebRequest);
 }
 
@@ -733,6 +744,7 @@ namespace {
 using electron::api::Cookies;
 using electron::api::NetLog;
 using electron::api::ProtocolNS;
+using electron::api::ServiceWorkerContext;
 using electron::api::Session;
 
 v8::Local<v8::Value> FromPartition(const std::string& partition,
@@ -764,6 +776,9 @@ void Initialize(v8::Local<v8::Object> exports,
   dict.Set("Protocol", ProtocolNS::GetConstructor(isolate)
                            ->GetFunction(context)
                            .ToLocalChecked());
+  dict.Set("ServiceWorkerContext", ServiceWorkerContext::GetConstructor(isolate)
+                                       ->GetFunction(context)
+                                       .ToLocalChecked());
   dict.SetMethod("fromPartition", &FromPartition);
 }
 
