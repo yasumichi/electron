@@ -1,6 +1,7 @@
 import("//build/config/locales.gni")
 import("//build/config/ui.gni")
 import("//build/config/win/manifest.gni")
+import("//build/config/mac/mac_sdk.gni")
 import("//content/public/app/mac_helpers.gni")
 import("//pdf/features.gni")
 import("//printing/buildflags/buildflags.gni")
