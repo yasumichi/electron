@@ -248,6 +248,13 @@ describe('systemPreferences module', () => {
     })
   })
 
+  ifdescribe(process.platform === 'darwin')('systemPreferences.isScreenCaptureAllowed()', () => {
+    it('returns a boolean', () => {
+      const allowed = systemPreferences.isScreenCaptureAllowed()
+      expect(allowed).to.be.a('boolean')
+    })
+  })
+
   describe('systemPreferences.getAnimationSettings()', () => {
     it('returns an object with all properties', () => {
       const settings = systemPreferences.getAnimationSettings()

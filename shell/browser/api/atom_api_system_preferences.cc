@@ -118,6 +118,8 @@ void SystemPreferences::BuildPrototype(
       .SetMethod("getMediaAccessStatus",
                  &SystemPreferences::GetMediaAccessStatus)
       .SetMethod("askForMediaAccess", &SystemPreferences::AskForMediaAccess)
+      .SetMethod("isScreenCaptureAllowed",
+                 &SystemPreferences::IsScreenCaptureAllowed)
 #endif
       .SetMethod("isInvertedColorScheme",
                  &SystemPreferences::IsInvertedColorScheme)

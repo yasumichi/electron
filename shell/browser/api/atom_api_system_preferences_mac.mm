@@ -14,6 +14,7 @@
 #import <LocalAuthentication/LocalAuthentication.h>
 #import <Security/Security.h>
 
+#include "base/mac/foundation_util.h"
 #include "base/mac/scoped_cftyperef.h"
 #include "base/mac/sdk_forward_declarations.h"
 #include "base/sequenced_task_runner.h"
@@ -636,6 +637,47 @@ v8::Local<v8::Promise> SystemPreferences::AskForMediaAccess(
   }
 
   return handle;
+}
+
+// Heuristic to check screen capture permission on macOS 10.15.
+// Screen Capture is considered allowed if the name of at least one normal,
+// dock or status window running on another process is visible.
+// See https://crbug.com/993692.
+
+// static
+bool SystemPreferences::IsScreenCaptureAllowed() {
+  if (@available(macOS 10.15, *)) {
+    base::ScopedCFTypeRef<CFArrayRef> window_list(CGWindowListCopyWindowInfo(
+        kCGWindowListOptionOnScreenOnly, kCGNullWindowID));
+    int current_pid = [[NSProcessInfo processInfo] processIdentifier];
+    for (NSDictionary* window in base::mac::CFToNSCast(window_list.get())) {
+      NSNumber* window_pid =
+          [window objectForKey:base::mac::CFToNSCast(kCGWindowOwnerPID)];
+      if (!window_pid || [window_pid integerValue] == current_pid)
+        continue;
+
+      NSString* window_name =
+          [window objectForKey:base::mac::CFToNSCast(kCGWindowName)];
+      if (!window_name)
+        continue;
+
+      NSNumber* layer =
+          [window objectForKey:base::mac::CFToNSCast(kCGWindowLayer)];
+      if (!layer)
+        continue;
+
+      NSInteger layer_integer = [layer integerValue];
+      if (layer_integer == CGWindowLevelForKey(kCGNormalWindowLevelKey) ||
+          layer_integer == CGWindowLevelForKey(kCGDockWindowLevelKey) ||
+          layer_integer == CGWindowLevelForKey(kCGStatusWindowLevelKey)) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  // Screen capture is always allowed in older macOS versions.
+  return true;
 }
 
 void SystemPreferences::RemoveUserDefault(const std::string& name) {

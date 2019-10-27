@@ -450,6 +450,12 @@ Returns `Promise<Boolean>` - A promise that resolves with `true` if consent was 
 
 This user consent was not required until macOS 10.14 Mojave, so this method will always return `true` if your system is running 10.13 High Sierra or lower.
 
+### `systemPreferences.isScreenCaptureAllowed()` _macOS_
+
+Returns `Boolean` - `true` if the current process is allowed to capture the screen and `false` if it is not.
+
+This user consent was not required until macOS 10.15 Catalina, so this method will always return `true` if your system is running 10.14 Mojave or lower.
+
 ### `systemPreferences.getAnimationSettings()`
 
 Returns `Object`:

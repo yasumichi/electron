@@ -110,6 +110,9 @@ class SystemPreferences : public gin_helper::EventEmitter<SystemPreferences>
                                    gin_helper::Arguments* args);
   v8::Local<v8::Promise> AskForMediaAccess(v8::Isolate* isolate,
                                            const std::string& media_type);
+  // TODO(miniak): Write tests for these methods once we
+  // are running tests on a Catalina machine
+  static bool IsScreenCaptureAllowed();
 
   // TODO(MarshallOfSound): Write tests for these methods once we
   // are running tests on a Mojave machine
