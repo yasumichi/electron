@@ -5,6 +5,7 @@ import * as ipcRendererUtils from '@electron/internal/renderer/ipc-renderer-inte
 import * as guestViewInternal from '@electron/internal/renderer/web-view/guest-view-internal'
 import { WEB_VIEW_CONSTANTS } from '@electron/internal/renderer/web-view/web-view-constants'
 import { syncMethods, asyncMethods } from '@electron/internal/common/web-view-methods'
+import { deserialize } from '@electron/internal/common/type-utils'
 const { webFrame } = electron
 
 const v8Util = process.electronBinding('v8_util')
@@ -246,7 +247,7 @@ export const setupMethods = (WebViewElement: typeof ElectronInternal.WebViewElem
   // Forward proto.foo* method calls to WebViewImpl.foo*.
   const createBlockHandler = function (method: string) {
     return function (this: ElectronInternal.WebViewElement, ...args: Array<any>) {
-      return ipcRendererUtils.invokeSync('ELECTRON_GUEST_VIEW_MANAGER_CALL', this.getWebContentsId(), method, args)
+      return deserialize(ipcRendererUtils.invokeSync('ELECTRON_GUEST_VIEW_MANAGER_CALL', this.getWebContentsId(), method, args))
     }
   }
 
@@ -255,8 +256,8 @@ export const setupMethods = (WebViewElement: typeof ElectronInternal.WebViewElem
   }
 
   const createNonBlockHandler = function (method: string) {
-    return function (this: ElectronInternal.WebViewElement, ...args: Array<any>) {
-      return ipcRendererInternal.invoke('ELECTRON_GUEST_VIEW_MANAGER_CALL', this.getWebContentsId(), method, args)
+    return async function (this: ElectronInternal.WebViewElement, ...args: Array<any>) {
+      return deserialize(await ipcRendererInternal.invoke('ELECTRON_GUEST_VIEW_MANAGER_CALL', this.getWebContentsId(), method, args))
     }
   }
 

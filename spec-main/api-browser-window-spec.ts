@@ -1017,7 +1017,7 @@ describe('BrowserWindow module', () => {
   describe('BrowserWindow.capturePage(rect)', () => {
     afterEach(closeAllWindows)
 
-    it('returns a Promise with a Buffer', async () => {
+    it('returns a Promise with a NativeImage', async () => {
       const w = new BrowserWindow({show: false})
       const image = await w.capturePage({
         x: 0,
