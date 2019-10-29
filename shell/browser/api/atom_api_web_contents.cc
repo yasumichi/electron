@@ -894,7 +894,15 @@ void WebContents::RenderViewDeleted(content::RenderViewHost* render_view_host) {
 }
 
 void WebContents::RenderProcessGone(base::TerminationStatus status) {
-  Emit("crashed", status == base::TERMINATION_STATUS_PROCESS_WAS_KILLED);
+  // Emit the crashed event in the next tick.
+  base::PostTask(
+      FROM_HERE, {content::BrowserThread::UI},
+      base::BindOnce(
+          [](base::WeakPtr<WebContents> self, bool killed) {
+            if (self)
+              self->Emit("crashed", killed);
+          },
+          GetWeakPtr(), status == base::TERMINATION_STATUS_PROCESS_WAS_KILLED));
 }
 
 void WebContents::PluginCrashed(const base::FilePath& plugin_path,
