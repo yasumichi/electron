@@ -2,7 +2,7 @@
 // Use of this source code is governed by the MIT license that can be
 // found in the LICENSE file.
 
-#include "shell/common/native_mate_converters/blink_converter.h"
+#include "shell/common/gin_converters/blink_converter.h"
 
 #include <algorithm>
 #include <string>
@@ -14,10 +14,10 @@
 #include "gin/converter.h"
 #include "mojo/public/cpp/base/values_mojom_traits.h"
 #include "mojo/public/mojom/base/values.mojom.h"
-#include "native_mate/dictionary.h"
 #include "shell/common/deprecate_util.h"
+#include "shell/common/gin_converters/value_converter.h"
+#include "shell/common/gin_helper/dictionary.h"
 #include "shell/common/keyboard_util.h"
-#include "shell/common/native_mate_converters/value_converter.h"
 #include "third_party/blink/public/common/context_menu_data/edit_flags.h"
 #include "third_party/blink/public/platform/web_input_event.h"
 #include "third_party/blink/public/platform/web_keyboard_event.h"
@@ -40,7 +40,7 @@ int VectorToBitArray(const std::vector<T>& vec) {
 
 }  // namespace
 
-namespace mate {
+namespace gin {
 
 template <>
 struct Converter<base::char16> {
@@ -150,7 +150,7 @@ struct Converter<blink::WebInputEvent::Modifiers> {
 blink::WebInputEvent::Type GetWebInputEventType(v8::Isolate* isolate,
                                                 v8::Local<v8::Value> val) {
   blink::WebInputEvent::Type type = blink::WebInputEvent::kUndefined;
-  mate::Dictionary dict;
+  gin_helper::Dictionary dict;
   ConvertFromV8(isolate, val, &dict) && dict.Get("type", &type);
   return type;
 }
@@ -158,7 +158,7 @@ blink::WebInputEvent::Type GetWebInputEventType(v8::Isolate* isolate,
 bool Converter<blink::WebInputEvent>::FromV8(v8::Isolate* isolate,
                                              v8::Local<v8::Value> val,
                                              blink::WebInputEvent* out) {
-  mate::Dictionary dict;
+  gin_helper::Dictionary dict;
   if (!ConvertFromV8(isolate, val, &dict))
     return false;
   blink::WebInputEvent::Type type;
@@ -175,7 +175,7 @@ bool Converter<blink::WebInputEvent>::FromV8(v8::Isolate* isolate,
 bool Converter<blink::WebKeyboardEvent>::FromV8(v8::Isolate* isolate,
                                                 v8::Local<v8::Value> val,
                                                 blink::WebKeyboardEvent* out) {
-  mate::Dictionary dict;
+  gin_helper::Dictionary dict;
   if (!ConvertFromV8(isolate, val, &dict))
     return false;
   if (!ConvertFromV8(isolate, val, static_cast<blink::WebInputEvent*>(out)))
@@ -220,7 +220,7 @@ bool Converter<blink::WebKeyboardEvent>::FromV8(v8::Isolate* isolate,
 bool Converter<blink::WebMouseEvent>::FromV8(v8::Isolate* isolate,
                                              v8::Local<v8::Value> val,
                                              blink::WebMouseEvent* out) {
-  mate::Dictionary dict;
+  gin_helper::Dictionary dict;
   if (!ConvertFromV8(isolate, val, &dict))
     return false;
   if (!ConvertFromV8(isolate, val, static_cast<blink::WebInputEvent*>(out)))
@@ -251,7 +251,7 @@ bool Converter<blink::WebMouseWheelEvent>::FromV8(
     v8::Isolate* isolate,
     v8::Local<v8::Value> val,
     blink::WebMouseWheelEvent* out) {
-  mate::Dictionary dict;
+  gin_helper::Dictionary dict;
   if (!ConvertFromV8(isolate, val, &dict))
     return false;
   if (!ConvertFromV8(isolate, val, static_cast<blink::WebMouseEvent*>(out)))
@@ -286,7 +286,7 @@ bool Converter<blink::WebMouseWheelEvent>::FromV8(
 bool Converter<blink::WebFloatPoint>::FromV8(v8::Isolate* isolate,
                                              v8::Local<v8::Value> val,
                                              blink::WebFloatPoint* out) {
-  mate::Dictionary dict;
+  gin_helper::Dictionary dict;
   if (!ConvertFromV8(isolate, val, &dict))
     return false;
   return dict.Get("x", &out->x) && dict.Get("y", &out->y);
@@ -297,7 +297,7 @@ struct Converter<base::Optional<blink::WebPoint>> {
   static bool FromV8(v8::Isolate* isolate,
                      v8::Local<v8::Value> val,
                      base::Optional<blink::WebPoint>* out) {
-    mate::Dictionary dict;
+    gin_helper::Dictionary dict;
     if (!ConvertFromV8(isolate, val, &dict))
       return false;
     blink::WebPoint point;
@@ -312,7 +312,7 @@ struct Converter<base::Optional<blink::WebPoint>> {
 bool Converter<blink::WebSize>::FromV8(v8::Isolate* isolate,
                                        v8::Local<v8::Value> val,
                                        blink::WebSize* out) {
-  mate::Dictionary dict;
+  gin_helper::Dictionary dict;
   if (!ConvertFromV8(isolate, val, &dict))
     return false;
   return dict.Get("width", &out->width) && dict.Get("height", &out->height);
@@ -322,7 +322,7 @@ bool Converter<blink::WebDeviceEmulationParams>::FromV8(
     v8::Isolate* isolate,
     v8::Local<v8::Value> val,
     blink::WebDeviceEmulationParams* out) {
-  mate::Dictionary dict;
+  gin_helper::Dictionary dict;
   if (!ConvertFromV8(isolate, val, &dict))
     return false;
 
@@ -351,19 +351,19 @@ v8::Local<v8::Value> Converter<blink::ContextMenuDataMediaType>::ToV8(
     const blink::ContextMenuDataMediaType& in) {
   switch (in) {
     case blink::ContextMenuDataMediaType::kImage:
-      return mate::StringToV8(isolate, "image");
+      return StringToV8(isolate, "image");
     case blink::ContextMenuDataMediaType::kVideo:
-      return mate::StringToV8(isolate, "video");
+      return StringToV8(isolate, "video");
     case blink::ContextMenuDataMediaType::kAudio:
-      return mate::StringToV8(isolate, "audio");
+      return StringToV8(isolate, "audio");
     case blink::ContextMenuDataMediaType::kCanvas:
-      return mate::StringToV8(isolate, "canvas");
+      return StringToV8(isolate, "canvas");
     case blink::ContextMenuDataMediaType::kFile:
-      return mate::StringToV8(isolate, "file");
+      return StringToV8(isolate, "file");
     case blink::ContextMenuDataMediaType::kPlugin:
-      return mate::StringToV8(isolate, "plugin");
+      return StringToV8(isolate, "plugin");
     default:
-      return mate::StringToV8(isolate, "none");
+      return StringToV8(isolate, "none");
   }
 }
 
@@ -373,18 +373,18 @@ v8::Local<v8::Value> Converter<blink::ContextMenuDataInputFieldType>::ToV8(
     const blink::ContextMenuDataInputFieldType& in) {
   switch (in) {
     case blink::ContextMenuDataInputFieldType::kPlainText:
-      return mate::StringToV8(isolate, "plainText");
+      return StringToV8(isolate, "plainText");
     case blink::ContextMenuDataInputFieldType::kPassword:
-      return mate::StringToV8(isolate, "password");
+      return StringToV8(isolate, "password");
     case blink::ContextMenuDataInputFieldType::kOther:
-      return mate::StringToV8(isolate, "other");
+      return StringToV8(isolate, "other");
     default:
-      return mate::StringToV8(isolate, "none");
+      return StringToV8(isolate, "none");
   }
 }
 
 v8::Local<v8::Value> EditFlagsToV8(v8::Isolate* isolate, int editFlags) {
-  mate::Dictionary dict = mate::Dictionary::CreateEmpty(isolate);
+  gin_helper::Dictionary dict = gin::Dictionary::CreateEmpty(isolate);
   dict.Set("canUndo",
            !!(editFlags & blink::ContextMenuDataEditFlags::kCanUndo));
   dict.Set("canRedo",
@@ -408,11 +408,11 @@ v8::Local<v8::Value> EditFlagsToV8(v8::Isolate* isolate, int editFlags) {
   dict.Set("canSelectAll",
            !!(editFlags & blink::ContextMenuDataEditFlags::kCanSelectAll));
 
-  return mate::ConvertToV8(isolate, dict);
+  return ConvertToV8(isolate, dict);
 }
 
 v8::Local<v8::Value> MediaFlagsToV8(v8::Isolate* isolate, int mediaFlags) {
-  mate::Dictionary dict = mate::Dictionary::CreateEmpty(isolate);
+  gin_helper::Dictionary dict = gin::Dictionary::CreateEmpty(isolate);
   dict.Set("inError",
            !!(mediaFlags & blink::WebContextMenuData::kMediaInError));
   dict.Set("isPaused",
@@ -428,13 +428,13 @@ v8::Local<v8::Value> MediaFlagsToV8(v8::Isolate* isolate, int mediaFlags) {
            !!(mediaFlags & blink::WebContextMenuData::kMediaCanToggleControls));
   dict.Set("canRotate",
            !!(mediaFlags & blink::WebContextMenuData::kMediaCanRotate));
-  return mate::ConvertToV8(isolate, dict);
+  return ConvertToV8(isolate, dict);
 }
 
 v8::Local<v8::Value> Converter<blink::WebCacheResourceTypeStat>::ToV8(
     v8::Isolate* isolate,
     const blink::WebCacheResourceTypeStat& stat) {
-  mate::Dictionary dict = mate::Dictionary::CreateEmpty(isolate);
+  gin_helper::Dictionary dict = gin::Dictionary::CreateEmpty(isolate);
   dict.Set("count", static_cast<uint32_t>(stat.count));
   dict.Set("size", static_cast<double>(stat.size));
   dict.Set("liveSize", static_cast<double>(stat.decoded_size));
@@ -444,7 +444,7 @@ v8::Local<v8::Value> Converter<blink::WebCacheResourceTypeStat>::ToV8(
 v8::Local<v8::Value> Converter<blink::WebCacheResourceTypeStats>::ToV8(
     v8::Isolate* isolate,
     const blink::WebCacheResourceTypeStats& stats) {
-  mate::Dictionary dict = mate::Dictionary::CreateEmpty(isolate);
+  gin_helper::Dictionary dict = gin::Dictionary::CreateEmpty(isolate);
   dict.Set("images", stats.images);
   dict.Set("scripts", stats.scripts);
   dict.Set("cssStyleSheets", stats.css_style_sheets);
@@ -460,24 +460,24 @@ v8::Local<v8::Value> Converter<network::mojom::ReferrerPolicy>::ToV8(
     const network::mojom::ReferrerPolicy& in) {
   switch (in) {
     case network::mojom::ReferrerPolicy::kDefault:
-      return mate::StringToV8(isolate, "default");
+      return StringToV8(isolate, "default");
     case network::mojom::ReferrerPolicy::kAlways:
-      return mate::StringToV8(isolate, "unsafe-url");
+      return StringToV8(isolate, "unsafe-url");
     case network::mojom::ReferrerPolicy::kNoReferrerWhenDowngrade:
-      return mate::StringToV8(isolate, "no-referrer-when-downgrade");
+      return StringToV8(isolate, "no-referrer-when-downgrade");
     case network::mojom::ReferrerPolicy::kNever:
-      return mate::StringToV8(isolate, "no-referrer");
+      return StringToV8(isolate, "no-referrer");
     case network::mojom::ReferrerPolicy::kOrigin:
-      return mate::StringToV8(isolate, "origin");
+      return StringToV8(isolate, "origin");
     case network::mojom::ReferrerPolicy::
         kNoReferrerWhenDowngradeOriginWhenCrossOrigin:
-      return mate::StringToV8(isolate, "strict-origin-when-cross-origin");
+      return StringToV8(isolate, "strict-origin-when-cross-origin");
     case network::mojom::ReferrerPolicy::kSameOrigin:
-      return mate::StringToV8(isolate, "same-origin");
+      return StringToV8(isolate, "same-origin");
     case network::mojom::ReferrerPolicy::kStrictOrigin:
-      return mate::StringToV8(isolate, "strict-origin");
+      return StringToV8(isolate, "strict-origin");
     default:
-      return mate::StringToV8(isolate, "no-referrer");
+      return StringToV8(isolate, "no-referrer");
   }
 }
 
@@ -528,7 +528,7 @@ class V8Serializer : public v8::ValueSerializer::Delegate {
       WriteTag(kOldSerializationTag);
       if (!WriteBaseValue(value)) {
         isolate_->ThrowException(
-            mate::StringToV8(isolate_, "An object could not be cloned."));
+            StringToV8(isolate_, "An object could not be cloned."));
         return false;
       }
     } else {
@@ -689,4 +689,4 @@ bool Converter<blink::CloneableMessage>::FromV8(v8::Isolate* isolate,
   return V8Serializer(isolate).Serialize(val, out);
 }
 
-}  // namespace mate
+}  // namespace gin
