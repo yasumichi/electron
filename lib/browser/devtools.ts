@@ -5,6 +5,10 @@ import * as url from 'url'
 import { ipcMainInternal } from '@electron/internal/browser/ipc-main-internal'
 import * as ipcMainUtils from '@electron/internal/browser/ipc-main-internal-utils'
 
+const {
+  Promise
+} = capturedGlobals
+
 const convertToMenuTemplate = function (items: ContextMenuItem[], handler: (id: number) => void) {
   return items.map(function (item) {
     const transformed: Electron.MenuItemConstructorOptions = item.type === 'subMenu' ? {

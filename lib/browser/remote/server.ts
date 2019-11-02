@@ -11,6 +11,10 @@ const v8Util = process.electronBinding('v8_util')
 const eventBinding = process.electronBinding('event')
 const features = process.electronBinding('features')
 
+const {
+  Promise
+} = capturedGlobals
+
 if (!features.isRemoteModuleEnabled()) {
   throw new Error('remote module is disabled')
 }

@@ -2,6 +2,10 @@ import { EventEmitter } from 'events'
 
 const { createDesktopCapturer } = process.electronBinding('desktop_capturer')
 
+const {
+  Promise
+} = capturedGlobals
+
 const deepEqual = (a: ElectronInternal.GetSourcesOptions, b: ElectronInternal.GetSourcesOptions) => JSON.stringify(a) === JSON.stringify(b)
 
 let currentlyRunning: {

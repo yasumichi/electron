@@ -1,4 +1,9 @@
+interface CapturedGlobals {
+  Promise: typeof Promise;
+}
+
 declare var internalBinding: any;
+declare var capturedGlobals: CapturedGlobals;
 
 declare namespace NodeJS {
   interface FeaturesBinding {

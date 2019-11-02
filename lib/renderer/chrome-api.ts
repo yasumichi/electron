@@ -4,6 +4,10 @@ import * as url from 'url'
 
 import { Event } from '@electron/internal/renderer/extensions/event'
 
+const {
+  Promise
+} = capturedGlobals
+
 class Tab {
   public id: number
 

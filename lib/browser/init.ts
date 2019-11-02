@@ -5,6 +5,10 @@ import * as util from 'util'
 
 const Module = require('module')
 
+const {
+  Promise
+} = capturedGlobals
+
 // We modified the original process.argv to let node.js load the init.js,
 // we need to restore it here.
 process.argv.splice(1, 1)

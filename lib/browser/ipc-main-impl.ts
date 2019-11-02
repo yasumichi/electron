@@ -1,6 +1,10 @@
 import { EventEmitter } from 'events'
 import { IpcMainInvokeEvent } from 'electron'
 
+const {
+  Promise
+} = capturedGlobals
+
 export class IpcMainImpl extends EventEmitter {
   private _invokeHandlers: Map<string, (e: IpcMainInvokeEvent, ...args: any[]) => void> = new Map();
 

@@ -1,0 +1,8 @@
+{
+  "rules": {
+    "no-restricted-globals": ["error", "primordials", "Promise"]
+  },
+  "globals": {
+    "capturedGlobals": true
+  }
+}
